@@ -14,6 +14,8 @@
   "author": "Amazon.com",
   "license": "Apache-2.0",
   "dependencies": {
-    "ask-sdk": "^2.0.0"
+    "ask-sdk": "^2.0.0",
+    "csv-load-sync": "^1.0.0",
+    "mtgsdk": "^0.4.2"
   }
 }
