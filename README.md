@@ -1,3 +1,3 @@
-# Trello Alexa Skill
+# Alexa Skill per Magic: The Gathering
 
-Una skill di Alexa per interfacciarsi con Trello
+Una skill di Alexa per cercare carte di Magic: The Gathering. Una roba così a caso per provare questa nuova mdoa del mio cervello.
