@@ -1,9 +1,14 @@
-/* eslint-disable  func-names */
-/* eslint-disable  no-console */
-
 const Alexa = require('ask-sdk');
 const MTGWrapper = require('./MTGWrapper');
+
 const DEBUG = false;
+const SKILL_NAME = 'Carte Magic';
+const HELP_MESSAGE = 'Posso cercare carte di Magic: The Gathering per te. Prova a chiedere "Alexa, chiedi a carte magic di cercare Gatto Nero!"';
+const HELP_REPROMPT = 'Posso aiutarti? È sempre un paicere cercare Ornitotteri!';
+const STOP_MESSAGE = 'Ci si vede!';
+const ERROR_MESSAGE = 'Ops, c\'è stato un piccolo errore...';
+
+const skillBuilder = Alexa.SkillBuilders.standard();
 
 function debug(msg) {
   if (DEBUG) console.log(msg);
@@ -138,15 +143,6 @@ const ErrorHandler = {
       .getResponse();
   },
 };
-
-const SKILL_NAME = 'Carte Magic';
-const HELP_MESSAGE = 'Posso cercare carte di Magic: The Gathering per te. Prova a chiedere "Alexa, chiedi a carte magic di cercare Gatto Nero!"';
-const HELP_REPROMPT = 'Posso aiutarti? È sempre un paicere cercare Ornitotteri!';
-const STOP_MESSAGE = 'Ci si vede!';
-const ERROR_MESSAGE = 'Ops, c\'è stato un piccolo errore...';
-
-
-const skillBuilder = Alexa.SkillBuilders.standard();
 
 exports.handler = skillBuilder
   .addRequestHandlers(

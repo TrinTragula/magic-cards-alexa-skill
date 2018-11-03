@@ -1,9 +1,5 @@
 const mtg = require('mtgsdk');
-
-const noColor = {
-    "Default": "Colorless",
-    "Italian": "Incolore"
-}
+const loader = require('csv-load-sync');
 
 const RARITY = {
     "Common": "Comune",
@@ -65,10 +61,14 @@ const MESSAGES = {
     COST: {
         "Default": "Mana cost",
         "Italian": "Costo mana"
+    },
+    NO_COLOR: {
+        "Default": "Colorless",
+        "Italian": "Incolore"
     }
 }
 
-const colors = {
+const COLORS = {
     "U": {
         "Default": "Blue",
         "Italian": "Blu"
@@ -90,6 +90,8 @@ const colors = {
         "Italian": "Rossa"
     }
 }
+
+const ITALIAN_LANGUAGE = "Italian";
 
 class MTGWrapper {
     constructor(language = null) {
@@ -149,43 +151,38 @@ class MTGWrapper {
         simpleCard.power = card.power;
         simpleCard.toughness = card.toughness;
         simpleCard.text = card.text;
-        simpleCard.color = card.colorIdentity ? card.colorIdentity.map(c => colors[c][this.language]).join(", ") : noColor[this.language];
+        simpleCard.color = card.colorIdentity ? card.colorIdentity.map(c => COLORS[c][this.language]).join(", ") : MESSAGES.NO_COLOR[this.language];
         simpleCard.type = card.type;
         simpleCard.manaRaw = card.manaCost ? card.manaCost : "{0}";
         simpleCard.manaCost = card.manaCost ? self.manaCostToString(card.manaCost) : 0;
         simpleCard.imageUrl = card.imageUrl;
-        simpleCard.rarity = card.rarity ? self.language == "Italian" && RARITY[card.rarity] ? RARITY[card.rarity] : card.rarity : null;
+        simpleCard.rarity = card.rarity ? self.language == ITALIAN_LANGUAGE && RARITY[card.rarity] ? RARITY[card.rarity] : card.rarity : null;
         // simpleCard.card = card;
-
-        if (self.language == "Italian") {
-            for (const type of Object.keys(TYPES)) {
-                simpleCard.type = simpleCard.type.replace(type, TYPES[type]);
-            }
-
-            const loader = require('csv-load-sync');
-            const csv = loader('cardlist.csv', {
-                getColumns: (line) => line.split(';')
-            });
-            const engDict = csv.reduce((p, c) => {
-                if (c.English) {
-                    p[c.English] = c.Testo
-                }
-                return p;
-            }, {});
-            if (engDict[card.name]) {
-                simpleCard.text = engDict[card.name];
-            } else {
-                for (const commonWord of Object.keys(TEXT_COMMON_WORDS)) {
-                    simpleCard.text = simpleCard.text.replace(commonWord, TEXT_COMMON_WORDS[commonWord]);
-                }
-            }
+        if (self.language == ITALIAN_LANGUAGE) {
+            self.tryTransalation(simpleCard, card);
         }
-
         return simpleCard;
     }
 
+    tryTransalation(simpleCard, card) {
+        const self = this;
+
+        for (const type of Object.keys(TYPES)) {
+            simpleCard.type = simpleCard.type.replace(type, TYPES[type]);
+        }
+
+        const engDict = self.getItalianDict();
+        if (engDict[card.name]) {
+            simpleCard.text = engDict[card.name];
+        } else {
+            for (const commonWord of Object.keys(TEXT_COMMON_WORDS)) {
+                simpleCard.text = simpleCard.text.replace(commonWord, TEXT_COMMON_WORDS[commonWord]);
+            }
+        }
+    }
+
     manaCostToString(manaCost) {
-        const keys = Object.keys(colors);
+        const keys = Object.keys(COLORS);
         const mana = {
             "B": 0,
             "W": 0,
@@ -203,12 +200,12 @@ class MTGWrapper {
 
         let result = "";
         if (mana["no-color"] != 0) {
-            result += `${mana["no-color"]} ${noColor[this.language]}`;
+            result += `${mana["no-color"]} ${MESSAGES.NO_COLOR[this.language]}`;
         }
         for (const key of keys) {
             if (mana[key] != 0) {
                 if (result.length > 0) result += ",";
-                result += ` ${mana[key]} ${colors[key][this.language]}`;
+                result += ` ${mana[key]} ${COLORS[key][this.language]}`;
             }
         }
         return result;
@@ -216,7 +213,7 @@ class MTGWrapper {
 
     cardToSpeech(card) {
         let result = `${card.name}. ${card.rarity} ${card.color}. ${card.type}.`;
-        result += ` ${MESSAGES.COST[this.language]}: ${!card.manaCost ? "0 " + noColor[this.language] : card.manaCost}`;
+        result += ` ${MESSAGES.COST[this.language]}: ${!card.manaCost ? "0 " + MESSAGES.NO_COLOR[this.language] : card.manaCost}`;
         if (card.power || card.toughness) {
             result += ` ${MESSAGES.WITH[this.language]} ${card.power}-${card.toughness}.`;
         } else {
@@ -229,10 +226,23 @@ class MTGWrapper {
         result += ` ${cleanText}`;
         return result;
     }
+
+    getItalianDict() {
+        const csv = loader('data/cardlist.csv', {
+            getColumns: (line) => line.split(';')
+        });
+        const engDict = csv.reduce((p, c) => {
+            if (c.English) {
+                p[c.English] = c.Testo
+            }
+            return p;
+        }, {});
+        return engDict;
+    }
 }
 
-// const wrp = new MTGWrapper("Italian");
-// wrp.getCardByName("Palla di fuoco")
+// const wrp = new MTGWrapper(ITALIAN_LANGUAGE);
+// wrp.getCardByName("Ornitottero")
 //     .then(card => {
 //         console.log(card);
 //     });
