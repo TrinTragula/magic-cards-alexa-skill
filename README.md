@@ -10,6 +10,10 @@ A simple skill that will let you ask Alexa for details about almost all Magic: T
 
 This skill is built upon the awesome magicthegathering.io APIs, used togheter with a database ([found here](https://mtgdb.it/database/index.php)) in order to try and translate most cards to the italian language (this skill tries to be bilingual). There is a lot of room for improvement: Alexa does all the hard work, but I should try to implement some logic to try and understand Magic card names from the interpretation Alexa gave of the card name the user tried to tell her. After all, this was an example skill I made to try out Alexa skills development, so don't expect a lot of updates or an overly performant product.
 
+### Deployment
+
+Just deploy this code in an Amazon Lambda instance and connect it tou your skill
+
 ### Sample usage:
 > Alexa, ask magic cards to find Black Cat
 
