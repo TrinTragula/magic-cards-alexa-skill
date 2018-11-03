@@ -16,3 +16,7 @@ This skill is built upon the awesome magicthegathering.io APIs, used togheter wi
 > Alexa, ask magic cards to find Fireball
 
 > Alexa, ask magic cards to find Vampire Aristocrat
+
+## Disclaimer
+- Magic: The Gathering, is (obviously) copyrighted by Wizards of the Coast.
+- This skill is not produced, endorsed, supported, or affiliated with Wizards of the Coast in any way or mean.
